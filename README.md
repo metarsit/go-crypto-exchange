@@ -6,7 +6,7 @@ The table of listed APIs that are supported by this package.
 
 ### `User API`
 | User API | Support |
-:---------------- | :---------------- |
+:---------------- | :----------------: |
 /v1/account | :heavy_check_mark:
 /v1/order |
 /v1/showOrders |
@@ -19,13 +19,13 @@ The table of listed APIs that are supported by this package.
 
 ### `Market API`
 | Endpoint API | Support |
-:---------------- | :---------------- |
+:---------------- | :----------------: |
 /v1/symbols | :heavy_check_mark:
 /v1/ticker |
 /v1/ticker |
 /v1/klines |
 /v1/trades |
-/v1/ticker/price |
+/v1/ticker/price | :heavy_check_mark:
 /v1/depth | :heavy_check_mark:
 
 ## `Installation`

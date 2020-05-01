@@ -63,3 +63,24 @@ func (m *Market) Depth(symbol, option string) (MarketResponse, error) {
 	}
 	return result, nil
 }
+
+// TickerPrice returns latest execution price for all markets
+func (m *Market) TickerPrice() (MarketResponse, error) {
+	tickerPriceURL := URL("/v1/ticker/price")
+	var result MarketResponse
+
+	resp, err := method.Get(tickerPriceURL, nil, nil)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return result, err
+	}
+	return result, nil
+}

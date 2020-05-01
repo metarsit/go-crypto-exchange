@@ -64,3 +64,5 @@ type Tick struct {
 	Bids [][]float64 `json:"bids"`
 	Time int64       `json:"time"`
 }
+
+type TickerPrice map[string]float64
