@@ -6,9 +6,9 @@ import (
 	"net/url"
 )
 
-// Post is a customized POST method to hit crypto.com exchange API
-func Post(url *url.URL, body io.Reader) (*http.Response, error) {
-	req, err := http.NewRequest("POST", url.String(), body)
+// Get is a customized Get method to hit crypto.com exchange API
+func Get(url *url.URL, body io.Reader) (*http.Response, error) {
+	req, err := http.NewRequest("GET", url.String(), body)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-// NewUserAPI creates a instance that
+// NewUserAPI creates an instance for User
 func NewUserAPI(apiKey, secretKey string, time int64) (*UserAuth, error) {
 	preEncodeMsg := fmt.Sprintf(`api_key%stime%s%s`,
 		apiKey,
@@ -23,4 +23,9 @@ func NewUserAPI(apiKey, secretKey string, time int64) (*UserAuth, error) {
 		Time:   fmt.Sprint(time),
 		Sign:   hex.EncodeToString(encode.Sum(nil)),
 	}, nil
+}
+
+// NewMarketAPI creates an instance for Market
+func NewMarketAPI() *Market {
+	return &Market{}
 }
