@@ -28,3 +28,23 @@ type Coin struct {
 	BTCValuation string `json:"btcValuation"`
 	Name         string `json:"coin"`
 }
+
+// Market is a struct for Crypto Exchange
+// Market API
+type Market struct{}
+
+// MarketResponse is Crypto Exchange Response of market struct
+type MarketResponse struct {
+	Code    string          `json:"code"`
+	Message string          `json:"msg"`
+	Data    []MarketSymbols `json:"data"`
+}
+
+// MarketSymbols is information of the symbol
+type MarketSymbols struct {
+	Name            string `json:"symbol"`
+	CountCoin       string `json:"count_coin"`
+	AmountPrecision int    `json:"amount_precision"`
+	BaseCoin        string `json:"base_coin"`
+	PricePrecision  int    `json:"price_precision"`
+}
