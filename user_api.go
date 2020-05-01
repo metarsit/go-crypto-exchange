@@ -32,6 +32,24 @@ func (u *UserAuth) Account() (UserResponse, error) {
 	return bodyToUserResponse(resp.Body, &result)
 }
 
+// ShowOrder returns all available orders
+func (u *UserAuth) ShowOrder(id, symbol string) (UserResponse, error) {
+	showOrderURL := URL("/v1/showOrder")
+
+	values, err := reqValues(u.APIKey, u.SecretKey, map[string]string{
+		"order_id": id,
+		"symbol":   symbol,
+	})
+
+	var result UserResponse
+	resp, err := method.Post(showOrderURL, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
 func bodyToUserResponse(body io.Reader, result *UserResponse) (UserResponse, error) {
 	respBytes, err := ioutil.ReadAll(body)
 	if err != nil {
@@ -48,9 +66,19 @@ func reqValues(apiKey, secretKey string, param map[string]string) (url.Values, e
 	// Time
 	time := fmt.Sprint(time.Now().UnixNano() / 1000000)
 
+	// Parameters
+	paramStr := ""
+	if param != nil {
+		for key, value := range param {
+			paramStr += (key + value)
+			values.Add(key, value)
+		}
+	}
+
 	// Sign
-	preEncodeMsg := fmt.Sprintf(`api_key%stime%s%s`,
+	preEncodeMsg := fmt.Sprintf(`api_key%s%stime%s%s`,
 		apiKey,
+		paramStr,
 		time,
 		secretKey,
 	)
@@ -64,12 +92,6 @@ func reqValues(apiKey, secretKey string, param map[string]string) (url.Values, e
 	values.Set("api_key", apiKey)
 	values.Set("time", time)
 	values.Set("sign", sign)
-
-	if param != nil {
-		for key, value := range param {
-			values.Add(key, value)
-		}
-	}
 
 	return values, nil
 }

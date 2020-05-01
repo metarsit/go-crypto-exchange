@@ -13,15 +13,20 @@ type UserAuth struct {
 
 // UserResponse is Crypto Exchange Response struct
 type UserResponse struct {
-	Code    string `json:"code"`
-	Message string `json:"msg"`
-	Data    Data   `json:"data"`
+	Code    string           `json:"code"`
+	Message string           `json:"msg"`
+	Data    *json.RawMessage `json:"data"`
 }
 
-// Data contains total asset and list of coins' information
-type Data struct {
+// Balance contains total asset and list of coins' information
+type Balance struct {
 	TotalAsset string `json:"total_asset"`
 	CoinList   []Coin `json:"coin_list"`
+}
+
+// Orders contains trade information of order(s)
+type Orders struct {
+	OrderInfo OrderInfo `json:"order_info"`
 }
 
 // Coin contains coin's information
@@ -30,6 +35,43 @@ type Coin struct {
 	Locked       string `json:"locked"`
 	BTCValuation string `json:"btcValuation"`
 	Name         string `json:"coin"`
+}
+
+// OrderInfo contains an order information
+type OrderInfo struct {
+	AvgPrice     string      `json:"avg_price"`
+	BaseCoin     string      `json:"baseCoin"`
+	CountCoin    string      `json:"countCoin"`
+	CreatedAt    int64       `json:"created_at"`
+	DealPrice    float64     `json:"deal_price"`
+	DealVolume   string      `json:"deal_volume"`
+	Fee          string      `json:"fee"`
+	FeeCoin      string      `json:"fee_coin"`
+	ID           int         `json:"id"`
+	Price        string      `json:"price"`
+	RemainVolume string      `json:"remain_volume"`
+	Side         string      `json:"side"`
+	SideMsg      string      `json:"side_msg"`
+	Source       int         `json:"source"`
+	SourceMsg    string      `json:"source_msg"`
+	Status       int         `json:"status"`
+	StatusMsg    string      `json:"status_msg"`
+	TotalPrice   string      `json:"total_price"`
+	TradeList    []UserTrade `json:"tradeList"`
+	Type         int         `json:"type"`
+	Volume       string      `json:"volume"`
+}
+
+// UserTrade contains an information of the trade
+type UserTrade struct {
+	Volume    string `json:"volume"`
+	FeeCoin   string `json:"feeCoin"`
+	Price     string `json:"price"`
+	Fee       string `json:"fee"`
+	CTime     int64  `json:"ctime"`
+	DealPrice string `json:"deal_price"`
+	ID        int    `json:"id"`
+	Type      string `json:"type"`
 }
 
 // Market is a struct for Crypto Exchange
@@ -86,9 +128,9 @@ type Symbol struct {
 	Rose   string `json:"rose"`
 }
 
-// Trade contains the information of the trade
+// MarketTrade contains the information of the trade
 // of specific market at the point of time
-type Trade struct {
+type MarketTrade struct {
 	Amount float64 `json:"amount"`
 	Price  float64 `json:"price"`
 	CTime  int64   `json:"ctime"`

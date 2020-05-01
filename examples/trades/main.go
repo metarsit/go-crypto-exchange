@@ -26,7 +26,7 @@ func main() {
 		log.Fatalf("[%s] API Error %s", resp.Code, resp.Message)
 	}
 
-	var data []exchange.Trade
+	var data []exchange.MarketTrade
 	json.Unmarshal(*resp.Data, &data)
 
 	fmt.Printf("======== %s ========\n", strings.ToUpper(symbol))
