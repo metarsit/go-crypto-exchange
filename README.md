@@ -26,7 +26,7 @@ The table of listed APIs that are supported by this package.
 /v1/klines |
 /v1/trades |
 /v1/ticker/price |
-/v1/depth |
+/v1/depth | :heavy_check_mark:
 
 ## `Installation`
 To use this package, run:
