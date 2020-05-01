@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -18,7 +19,10 @@ func main() {
 		log.Fatalf("[%s] API Error %s", resp.Code, resp.Message)
 	}
 
-	for _, symbol := range resp.Data {
+	var data []exchange.MarketSymbols
+	json.Unmarshal(*resp.Data, &data)
+
+	for _, symbol := range data {
 		fmt.Printf(
 			`
 Symbol          : %s
@@ -26,7 +30,7 @@ Count Coin      : %s
 Base Coin       : %s
 Amount Precision: %d
 Price Precision : %d
-`,
+	`,
 			symbol.Name, symbol.CountCoin, symbol.BaseCoin,
 			symbol.AmountPrecision, symbol.PricePrecision,
 		)
