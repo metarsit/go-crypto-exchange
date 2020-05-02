@@ -3,8 +3,11 @@ package exchange
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/url"
+	"strconv"
+	"time"
 
 	"github.com/metarsit/exchange/internal/method"
 )
@@ -143,4 +146,56 @@ func (m *Market) Trades(symbol string) (MarketResponse, error) {
 		return result, err
 	}
 	return result, nil
+}
+
+// KLines gets k-line data over a specified period
+func (m *Market) KLines(symbol string, period int) (MarketResponse, error) {
+	kLinesURL := URL("/v1/klines")
+	var result MarketResponse
+
+	if symbol == "" {
+		return result, errors.New("Symbol cannot be empty")
+	}
+
+	if !allowedPeriod(period) {
+		return result, errors.New("Period selected is not allowed")
+	}
+
+	query := url.Values{
+		"period": []string{strconv.Itoa(period)},
+		"symbol": []string{symbol},
+	}
+
+	resp, err := method.Get(kLinesURL, nil, query)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	// Crypto.com Exchange does not return 404 when symbol does not show
+	if resp.StatusCode == 500 {
+		return result, errors.New("Symbol does not exist")
+	}
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+func allowedPeriod(period int) bool {
+	for _, allowed := range []time.Duration{1, 5, 15, 30, 60, 1440, 10080, 43200} {
+		duration, err := time.ParseDuration(fmt.Sprintf("%dm", period))
+		if err != nil {
+			continue
+		}
+		if (allowed * time.Minute) == duration {
+			return true
+		}
+	}
+	return false
 }
