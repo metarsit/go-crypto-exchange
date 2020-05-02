@@ -9,7 +9,7 @@ import (
 	"github.com/metarsit/exchange/internal/method"
 )
 
-// Symbols return the whole list of market symbols
+// Symbols lists all available market symbols
 func (m *Market) Symbols() (MarketResponse, error) {
 	symbolURL := URL("/v1/symbols")
 
@@ -29,7 +29,7 @@ func (m *Market) Symbols() (MarketResponse, error) {
 	return result, nil
 }
 
-// Depth returns the detail of the requested symbol
+// Depth gets the order book for a particular market
 func (m *Market) Depth(symbol, option string) (MarketResponse, error) {
 	depthURL := URL("/v1/depth")
 	var result MarketResponse
@@ -70,6 +70,32 @@ func (m *Market) TickerPrice() (MarketResponse, error) {
 	var result MarketResponse
 
 	resp, err := method.Get(tickerPriceURL, nil, nil)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+// Ticker gets ticker for a/or particular market
+func (m *Market) Ticker(symbol string) (MarketResponse, error) {
+	tickerURL := URL("/v1/ticker")
+	var result MarketResponse
+	values := url.Values{}
+
+	if symbol != "" {
+		values.Add("symbol", symbol)
+	}
+
+	resp, err := method.Get(tickerURL, nil, values)
 	if err != nil {
 		return result, err
 	}

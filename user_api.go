@@ -9,7 +9,7 @@ import (
 	"github.com/metarsit/exchange/internal/method"
 )
 
-// Account returns User's Account Balance
+// Account lists all available market symbols
 func (u *UserAuth) Account() (UserResponse, error) {
 	accountURL := URL("/v1/account")
 	values := url.Values{
