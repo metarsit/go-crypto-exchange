@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"strconv"
@@ -22,14 +23,8 @@ func (m *Market) Symbols() (MarketResponse, error) {
 		return result, err
 	}
 	defer resp.Body.Close()
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 // Depth gets the order book for a particular market
@@ -57,14 +52,7 @@ func (m *Market) Depth(symbol, option string) (MarketResponse, error) {
 		return result, errors.New("Symbol does not exist")
 	}
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 // TickerPrice returns latest execution price for all markets
@@ -78,14 +66,7 @@ func (m *Market) TickerPrice() (MarketResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 // Ticker gets ticker for a/or particular market
@@ -104,14 +85,7 @@ func (m *Market) Ticker(symbol string) (MarketResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 // Trades gets the last 200 trades in a specified market
@@ -138,14 +112,7 @@ func (m *Market) Trades(symbol string) (MarketResponse, error) {
 		return result, errors.New("Symbol does not exist")
 	}
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 // KLines gets k-line data over a specified period
@@ -177,14 +144,7 @@ func (m *Market) KLines(symbol string, period int) (MarketResponse, error) {
 		return result, errors.New("Symbol does not exist")
 	}
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-	if err := json.Unmarshal(respBytes, &result); err != nil {
-		return result, err
-	}
-	return result, nil
+	return bodyToMarketResponse(resp.Body, &result)
 }
 
 func allowedPeriod(period int) bool {
@@ -198,4 +158,15 @@ func allowedPeriod(period int) bool {
 		}
 	}
 	return false
+}
+
+func bodyToMarketResponse(body io.Reader, result *MarketResponse) (MarketResponse, error) {
+	respBytes, err := ioutil.ReadAll(body)
+	if err != nil {
+		return *result, err
+	}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return *result, err
+	}
+	return *result, nil
 }

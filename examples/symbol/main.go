@@ -30,7 +30,7 @@ Count Coin      : %s
 Base Coin       : %s
 Amount Precision: %d
 Price Precision : %d
-	`,
+`,
 			symbol.Name, symbol.CountCoin, symbol.BaseCoin,
 			symbol.AmountPrecision, symbol.PricePrecision,
 		)
