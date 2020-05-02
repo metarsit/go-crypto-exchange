@@ -24,7 +24,7 @@ The table of listed APIs that are supported by this package.
 /v1/ticker | :heavy_check_mark:
 /v1/ticker?symbol= | :heavy_exclamation_mark:
 /v1/klines |
-/v1/trades |
+/v1/trades | :heavy_check_mark:
 /v1/ticker/price | :heavy_check_mark:
 /v1/depth | :heavy_check_mark:
 

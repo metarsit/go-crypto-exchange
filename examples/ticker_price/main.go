@@ -13,7 +13,7 @@ func main() {
 	market := exchange.NewMarketAPI()
 	resp, err := market.TickerPrice()
 	if err != nil {
-		log.Fatalf("Unable to retrieve Market Symbol: %s", err.Error())
+		log.Fatalf("Unable to retrieve Market Ticker: %s", err.Error())
 	}
 
 	if resp.Code != "0" {
