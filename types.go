@@ -65,4 +65,24 @@ type Tick struct {
 	Time int64       `json:"time"`
 }
 
+// TickerPrice contains all prices
 type TickerPrice map[string]float64
+
+// TickerAll contains server time and list of all tickers
+type TickerAll struct {
+	Date int64    `json:"date"`
+	List []Symbol `json:"ticker"`
+}
+
+// Symbol contains ticker's information
+type Symbol struct {
+	Name   string `json:"symbol"`
+	High   string `json:"high"`
+	Low    string `json:"low"`
+	Volume string `json:"vol"`
+	Last   string `json:"last"`
+	Buy    string `json:"buy"`
+	Sell   string `json:"sell"`
+	Change string `json:"change"`
+	Rose   string `json:"rose"`
+}

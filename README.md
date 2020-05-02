@@ -21,12 +21,19 @@ The table of listed APIs that are supported by this package.
 | Endpoint API | Support |
 :---------------- | :----------------: |
 /v1/symbols | :heavy_check_mark:
-/v1/ticker |
-/v1/ticker |
+/v1/ticker | :heavy_check_mark:
+/v1/ticker?symbol= | :heavy_exclamation_mark:
 /v1/klines |
 /v1/trades |
 /v1/ticker/price | :heavy_check_mark:
 /v1/depth | :heavy_check_mark:
+
+### `Remark`
+There are more information in `README.md` of each examples.
+
+:heavy_check_mark: - API works as expected
+
+:heavy_exclamation_mark: - API does not fully return expected information
 
 ## `Installation`
 To use this package, run:
