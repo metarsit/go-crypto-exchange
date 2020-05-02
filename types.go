@@ -86,3 +86,13 @@ type Symbol struct {
 	Change string `json:"change"`
 	Rose   string `json:"rose"`
 }
+
+// Trade contains the information of the trade
+// of specific market at the point of time
+type Trade struct {
+	Amount float64 `json:"amount"`
+	Price  float64 `json:"price"`
+	CTime  int64   `json:"ctime"`
+	ID     int     `json:"id"`
+	Type   string  `json:"type"`
+}

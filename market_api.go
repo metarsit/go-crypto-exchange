@@ -110,3 +110,37 @@ func (m *Market) Ticker(symbol string) (MarketResponse, error) {
 	}
 	return result, nil
 }
+
+// Trades gets the last 200 trades in a specified market
+func (m *Market) Trades(symbol string) (MarketResponse, error) {
+	tradesURL := URL("/v1/trades")
+	var result MarketResponse
+
+	if symbol == "" {
+		return result, errors.New("Symbol cannot be empty")
+	}
+
+	query := url.Values{
+		"symbol": []string{symbol},
+	}
+
+	resp, err := method.Get(tradesURL, nil, query)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	// Crypto.com Exchange does not return 404 when symbol does not show
+	if resp.StatusCode == 500 {
+		return result, errors.New("Symbol does not exist")
+	}
+
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+	if err := json.Unmarshal(respBytes, &result); err != nil {
+		return result, err
+	}
+	return result, nil
+}
