@@ -38,4 +38,4 @@ There are more information in `README.md` of each examples.
 ## `Installation`
 To use this package, run:
 
-    go get github.com/metarsit/exchange
+    go get github.com/metarsit/go-crypto-exchange
