@@ -2,6 +2,7 @@ package exchange
 
 import (
 	"encoding/json"
+	"net/url"
 )
 
 // UserAuth contains required necessary information
@@ -10,6 +11,7 @@ type UserAuth struct {
 	APIKey string `json:"api_key"`
 	Time   string `json:"time"`
 	Sign   string `json:"sign"`
+	Values *url.Values
 }
 
 // UserResponse is Crypto Exchange Response struct
