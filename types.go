@@ -29,6 +29,12 @@ type Orders struct {
 	OrderInfo OrderInfo `json:"order_info"`
 }
 
+// AllOrders contains all requested order information
+type AllOrders struct {
+	Count     int         `json:"count"`
+	OrderList []OrderInfo `json:"orderList"`
+}
+
 // Coin contains coin's information
 type Coin struct {
 	Normal       string `json:"normal"`

@@ -4,10 +4,13 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/url"
+	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -19,7 +22,9 @@ func (u *UserAuth) Account() (UserResponse, error) {
 	accountURL := URL("/v1/account")
 
 	var result UserResponse
-	values, err := reqValues(u.APIKey, u.SecretKey, nil)
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key": u.APIKey,
+	})
 	if err != nil {
 		return result, err
 	}
@@ -36,13 +41,41 @@ func (u *UserAuth) Account() (UserResponse, error) {
 func (u *UserAuth) ShowOrder(id, symbol string) (UserResponse, error) {
 	showOrderURL := URL("/v1/showOrder")
 
-	values, err := reqValues(u.APIKey, u.SecretKey, map[string]string{
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key":  u.APIKey,
 		"order_id": id,
 		"symbol":   symbol,
 	})
 
 	var result UserResponse
 	resp, err := method.Post(showOrderURL, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
+// AllOrders lists all orders in a particular market
+func (u *UserAuth) AllOrders(symbol, startDate, endDate string, page, pageSize int) (UserResponse, error) {
+	allOrders := URL("/v1/allOrders")
+	var result UserResponse
+
+	pattern := regexp.MustCompile(`[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]`)
+	if !pattern.Match([]byte(startDate)) || !pattern.Match([]byte(endDate)) {
+		return result, errors.New(`the input date does not match the format: YYYY:MM:DD HH:mm:ss`)
+	}
+
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key":   u.APIKey,
+		"endDate":   endDate,
+		"page":      fmt.Sprint(page),
+		"pageSize":  fmt.Sprint(pageSize),
+		"startDate": startDate,
+		"symbol":    symbol,
+	})
+
+	resp, err := method.Post(allOrders, strings.NewReader(values.Encode()))
 	if err != nil {
 		return result, err
 	}
@@ -61,36 +94,36 @@ func bodyToUserResponse(body io.Reader, result *UserResponse) (UserResponse, err
 	return *result, nil
 }
 
-func reqValues(apiKey, secretKey string, param map[string]string) (url.Values, error) {
+func reqValues(secretKey string, param map[string]string) (url.Values, error) {
 	values := url.Values{}
-	// Time
-	time := fmt.Sprint(time.Now().UnixNano() / 1000000)
 
-	// Parameters
+	if param == nil {
+		return nil, errors.New("parameter cannot be nil")
+	}
+
+	// Time
+	param["time"] = fmt.Sprint(time.Now().UnixNano() / 1000000)
+
+	// Sorted Parameters
+	keys := []string{}
 	paramStr := ""
-	if param != nil {
-		for key, value := range param {
-			paramStr += (key + value)
-			values.Add(key, value)
-		}
+	for key := range param {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, value := range keys {
+		paramStr += (value + param[value])
+		values.Add(value, param[value])
 	}
 
 	// Sign
-	preEncodeMsg := fmt.Sprintf(`api_key%s%stime%s%s`,
-		apiKey,
-		paramStr,
-		time,
-		secretKey,
-	)
+	preEncodeMsg := paramStr + secretKey
 	encode := sha256.New()
 	_, err := encode.Write([]byte(preEncodeMsg))
 	if err != nil {
 		return nil, err
 	}
 	sign := hex.EncodeToString(encode.Sum(nil))
-
-	values.Set("api_key", apiKey)
-	values.Set("time", time)
 	values.Set("sign", sign)
 
 	return values, nil
