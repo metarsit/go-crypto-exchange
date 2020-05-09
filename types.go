@@ -35,6 +35,12 @@ type AllOrders struct {
 	OrderList []OrderInfo `json:"orderList"`
 }
 
+// MyTrades contains all trades information
+type MyTrades struct {
+	Count      int         `json:"count"`
+	ResultList []UserTrade `json:"resultList"`
+}
+
 // Coin contains coin's information
 type Coin struct {
 	Normal       string `json:"normal"`
@@ -70,14 +76,18 @@ type OrderInfo struct {
 
 // UserTrade contains an information of the trade
 type UserTrade struct {
-	Volume    string `json:"volume"`
-	FeeCoin   string `json:"feeCoin"`
-	Price     string `json:"price"`
-	Fee       string `json:"fee"`
+	AskID     int64  `json:"ask_id,omitempty"`
+	AskUserID int64  `json:"ask_user_id,omitempty"`
+	BidID     int64  `json:"bid_id,omitempty"`
+	BidUserID int64  `json:"bid_user_id,omitempty"`
 	CTime     int64  `json:"ctime"`
 	DealPrice string `json:"deal_price"`
+	Fee       string `json:"fee"`
+	FeeCoin   string `json:"feeCoin"`
 	ID        int    `json:"id"`
+	Price     string `json:"price"`
 	Type      string `json:"type"`
+	Volume    string `json:"volume"`
 }
 
 // Market is a struct for Crypto Exchange

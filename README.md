@@ -14,7 +14,7 @@ The table of listed APIs that are supported by this package.
 /v1/cancelAllOrders |
 /v1/openOrders |
 /v1/allOrders | :heavy_check_mark:
-/v1/myTrade |
+/v1/myTrade | :heavy_check_mark:
 
 
 ### `Market API`

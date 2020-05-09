@@ -89,6 +89,36 @@ func (u *UserAuth) AllOrders(symbol, startDate, endDate string, page, pageSize i
 	return bodyToUserResponse(resp.Body, &result)
 }
 
+// MyTrades lists all executed orders within the give dates
+func (u *UserAuth) MyTrades(symbol, startDate, endDate string, page, pageSize int) (UserResponse, error) {
+	myTrades := URL("/v1/myTrades")
+	var result UserResponse
+
+	pattern := regexp.MustCompile(`[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]`)
+	if !pattern.Match([]byte(startDate)) || !pattern.Match([]byte(endDate)) {
+		return result, errors.New(`the input date does not match the format: YYYY:MM:DD HH:mm:ss`)
+	}
+
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key":   u.APIKey,
+		"endDate":   endDate,
+		"page":      fmt.Sprint(page),
+		"pageSize":  fmt.Sprint(pageSize),
+		"startDate": startDate,
+		"symbol":    symbol,
+	})
+	if err != nil {
+		return result, err
+	}
+
+	resp, err := method.Post(myTrades, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
 // CancelOrder cancels a specified order
 func (u *UserAuth) CancelOrder(symbol string, orderID int) (UserResponse, error) {
 	allOrders := URL("/v1/orders/cancel")
