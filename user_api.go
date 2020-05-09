@@ -111,6 +111,27 @@ func (u *UserAuth) CancelOrder(symbol string, orderID int) (UserResponse, error)
 	return bodyToUserResponse(resp.Body, &result)
 }
 
+// CancelAllOrders cancels all orders in a particular market
+func (u *UserAuth) CancelAllOrders(symbol string) (UserResponse, error) {
+	cancelAllOrders := URL("/v1/cancelAllOrders")
+	var result UserResponse
+
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key": u.APIKey,
+		"symbol":  symbol,
+	})
+	if err != nil {
+		return result, err
+	}
+
+	resp, err := method.Post(cancelAllOrders, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
 func bodyToUserResponse(body io.Reader, result *UserResponse) (UserResponse, error) {
 	respBytes, err := ioutil.ReadAll(body)
 	if err != nil {

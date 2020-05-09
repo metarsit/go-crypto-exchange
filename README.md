@@ -11,7 +11,7 @@ The table of listed APIs that are supported by this package.
 /v1/order |
 /v1/showOrders | :heavy_check_mark:
 /v1/orders/cancel | :heavy_check_mark:
-/v1/cancelAllOrders |
+/v1/cancelAllOrders | :heavy_check_mark:
 /v1/openOrders |
 /v1/allOrders | :heavy_check_mark:
 /v1/myTrade |
