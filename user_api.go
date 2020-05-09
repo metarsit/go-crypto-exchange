@@ -20,8 +20,8 @@ import (
 // Account lists all available market symbols
 func (u *UserAuth) Account() (UserResponse, error) {
 	accountURL := URL("/v1/account")
-
 	var result UserResponse
+
 	values, err := reqValues(u.SecretKey, map[string]string{
 		"api_key": u.APIKey,
 	})
@@ -40,14 +40,17 @@ func (u *UserAuth) Account() (UserResponse, error) {
 // ShowOrder returns all available orders
 func (u *UserAuth) ShowOrder(id, symbol string) (UserResponse, error) {
 	showOrderURL := URL("/v1/showOrder")
+	var result UserResponse
 
 	values, err := reqValues(u.SecretKey, map[string]string{
 		"api_key":  u.APIKey,
 		"order_id": id,
 		"symbol":   symbol,
 	})
+	if err != nil {
+		return result, err
+	}
 
-	var result UserResponse
 	resp, err := method.Post(showOrderURL, strings.NewReader(values.Encode()))
 	if err != nil {
 		return result, err
@@ -74,6 +77,31 @@ func (u *UserAuth) AllOrders(symbol, startDate, endDate string, page, pageSize i
 		"startDate": startDate,
 		"symbol":    symbol,
 	})
+	if err != nil {
+		return result, err
+	}
+
+	resp, err := method.Post(allOrders, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
+// CancelOrder cancels a specified order
+func (u *UserAuth) CancelOrder(symbol string, orderID int) (UserResponse, error) {
+	allOrders := URL("/v1/orders/cancel")
+	var result UserResponse
+
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key":  u.APIKey,
+		"order_id": fmt.Sprint(orderID),
+		"symbol":   symbol,
+	})
+	if err != nil {
+		return result, err
+	}
 
 	resp, err := method.Post(allOrders, strings.NewReader(values.Encode()))
 	if err != nil {
