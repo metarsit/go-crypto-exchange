@@ -162,6 +162,29 @@ func (u *UserAuth) CancelAllOrders(symbol string) (UserResponse, error) {
 	return bodyToUserResponse(resp.Body, &result)
 }
 
+// OpenOrders lists all open orders in a particular market
+func (u *UserAuth) OpenOrders(symbol string, page, pageSize int) (UserResponse, error) {
+	openOrders := URL("/v1/openOrders")
+	var result UserResponse
+
+	values, err := reqValues(u.SecretKey, map[string]string{
+		"api_key":  u.APIKey,
+		"symbol":   symbol,
+		"page":     fmt.Sprint(page),
+		"pageSize": fmt.Sprint(pageSize),
+	})
+	if err != nil {
+		return result, err
+	}
+
+	resp, err := method.Post(openOrders, strings.NewReader(values.Encode()))
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+	return bodyToUserResponse(resp.Body, &result)
+}
+
 func bodyToUserResponse(body io.Reader, result *UserResponse) (UserResponse, error) {
 	respBytes, err := ioutil.ReadAll(body)
 	if err != nil {

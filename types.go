@@ -35,6 +35,12 @@ type AllOrders struct {
 	OrderList []OrderInfo `json:"orderList"`
 }
 
+// OpenOrders contains all open trades information
+type OpenOrders struct {
+	Count  int         `json:"count"`
+	Trades []OrderInfo `json:"resultList"`
+}
+
 // MyTrades contains all trades information
 type MyTrades struct {
 	Count      int         `json:"count"`
