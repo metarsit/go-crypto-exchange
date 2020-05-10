@@ -22,8 +22,8 @@ func main() {
 	flag.StringVar(&symbol, "symbol", "", "Market mark, ethbtc, See below for details")
 	flag.StringVar(&startDate, "startDate", "", "Start date of the trade history")
 	flag.StringVar(&endDate, "endDate", "", "End date of the trade history")
-	flag.IntVar(&page, "page", 0, "Page number")
-	flag.IntVar(&pageSize, "pageSize", 0, "Page Size")
+	flag.IntVar(&page, "page", 1, "Page number")
+	flag.IntVar(&pageSize, "pageSize", 1, "Page Size")
 	flag.Parse()
 
 	api, err := exchange.NewUserAPI(key, secret)
