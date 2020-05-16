@@ -1,0 +1,32 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+gazelle(
+    name = "gazelle",
+    # you project name here!
+    prefix = "github.com/metarsit/exchange",
+)
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "auth.go",
+        "market_api.go",
+        "types.go",
+        "url.go",
+        "user_api.go",
+    ],
+    importpath = "github.com/metarsit/exchange",
+    visibility = ["//visibility:public"],
+    deps = ["//internal/method:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "auth_test.go",
+        "url_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = ["@tools_gotest//assert:go_default_library"],
+)
